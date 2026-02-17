@@ -19,4 +19,12 @@ public class Product {
     private String name;
     private int stockQuantity;
     private int price;
+
+    public void getDecreaseStockQuantity(int quantity) {
+        if(stockQuantity < quantity) {
+            throw new IllegalArgumentException("재고 부족");
+        }
+
+        this.stockQuantity -= quantity;
+    }
 }
