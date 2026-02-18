@@ -3,6 +3,7 @@ package com.asdf.shoppingmall.User.controller;
 import com.asdf.shoppingmall.User.dto.LoginRequest;
 import com.asdf.shoppingmall.User.dto.SignupRequest;
 import com.asdf.shoppingmall.User.service.UserService;
+import com.asdf.shoppingmall.security.Jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +22,8 @@ public class UserController {
 
     @Autowired
     private final AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtProvider jwtProvider;
 
     public UserController(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -46,6 +49,8 @@ public class UserController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return ResponseEntity.ok("로그인 성공");
+        String token = jwtProvider.generateToken(authentication);
+
+        return ResponseEntity.ok(token);
     }
 }
