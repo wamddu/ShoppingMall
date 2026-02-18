@@ -6,16 +6,19 @@ import com.asdf.shoppingmall.Order.domain.Order;
 import com.asdf.shoppingmall.Product.domain.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class User {
 
     @Id
