@@ -26,4 +26,19 @@ public class Cart_Product {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
     private Cart cart;
+
+    public static Cart_Product createCartProduct(Product product, int count) {
+        Cart_Product cp = new Cart_Product();
+        cp.setProduct(product);
+        cp.setCount(count);
+        return cp;
+    }
+
+    public void addCount(int count) {
+        this.count += count;
+    }
+
+    public void changeCount(int count) {
+        this.count = count;
+    }
 }

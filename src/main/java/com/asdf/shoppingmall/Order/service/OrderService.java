@@ -3,10 +3,7 @@ package com.asdf.shoppingmall.Order.service;
 import com.asdf.shoppingmall.Cart.domain.Cart;
 import com.asdf.shoppingmall.Cart.domain.Cart_Product;
 import com.asdf.shoppingmall.Cart.repository.CartRepository;
-import com.asdf.shoppingmall.Order.domain.Delivery;
-import com.asdf.shoppingmall.Order.domain.DeliveryStatus;
-import com.asdf.shoppingmall.Order.domain.Order;
-import com.asdf.shoppingmall.Order.domain.Order_Product;
+import com.asdf.shoppingmall.Order.domain.*;
 import com.asdf.shoppingmall.Order.repository.OrderRepository;
 import com.asdf.shoppingmall.Product.domain.Product;
 import com.asdf.shoppingmall.User.domain.User;
@@ -61,10 +58,21 @@ public class OrderService {
         delivery.setDeliveryStatus(DeliveryStatus.READY);
         order.setDelivery(delivery);
 
+        order.setOrderStatus(OrderStatus.ORDERED);
+
         orderRepository.save(order);
 
         cartRepository.deleteById(user.getCart().getId());
 
         return order.getId();
+    }
+
+    @Transactional
+    public void cancelOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+        order.setOrderStatus(OrderStatus.CANCELED);
+        orderRepository.save(order);
     }
 }
