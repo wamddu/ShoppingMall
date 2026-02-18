@@ -4,14 +4,16 @@ import com.asdf.shoppingmall.Product.domain.Product;
 import com.asdf.shoppingmall.Product.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ProductController {
 
-    private ProductService productService;
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @PostMapping("/api/product/add")
     public ResponseEntity<String> addProduct(@RequestBody Product product) {
@@ -26,11 +28,11 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/api/product/delete")
-    public ResponseEntity<String> deleteProduct(@RequestBody Product product, @RequestBody Long id) {
+    @DeleteMapping("/api/product/delete/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable long id) {
 
         try {
-            productService.deleteProduct(product, id);
+            productService.deleteProduct(id);
 
             return ResponseEntity.ok("삭제 성공!");
         } catch (Exception e) {

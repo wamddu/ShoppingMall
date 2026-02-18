@@ -5,6 +5,7 @@ import com.asdf.shoppingmall.Product.repository.ProductRepository;
 import com.asdf.shoppingmall.User.domain.Role;
 import com.asdf.shoppingmall.User.domain.User;
 import com.asdf.shoppingmall.User.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,26 +21,35 @@ public class ProductService {
 
     public void addProduct(Product product) {
 
-        if(productRepository.existsByName(product.getName()).isPresent()) {
-            throw new IllegalArgumentException("Product already exists");
-        }
+            if(productRepository.existsProductByName(product.getName())) {
+                throw new IllegalArgumentException("Product already exists");
+            }
 
-        try {
-            productRepository.save(product);
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            try{
+                product.setSeller(user);
+                productRepository.save(product);
         } catch (Exception ex) {
             throw new IllegalArgumentException("Product already exists");
         }
     }
 
-    public void deleteProduct(Product product, Long userId) {
-        if(productRepository.existsByName(product.getName()).isEmpty()) {
-            throw new IllegalArgumentException("Product not found");
-        }
+    public void deleteProduct(long Id) {
 
-        User user = userRepository.findById(userId).get();
+        Product product1 = productRepository.findById(Id)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
-        if(product.getSeller().getId().equals(user.getId()) || user.getRole() == Role.ADMIN) {
-            productRepository.delete(product);
+        String username =  SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if(product1.getSeller().getId().equals(user.getId()) || user.getRole() == Role.ADMIN) {
+            productRepository.delete(product1);
         }
         else {
             throw new IllegalArgumentException("Only Admin or Seller can delete this product");
