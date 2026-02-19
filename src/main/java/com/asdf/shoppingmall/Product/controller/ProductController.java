@@ -1,6 +1,7 @@
 package com.asdf.shoppingmall.Product.controller;
 
 import com.asdf.shoppingmall.Product.domain.Product;
+import com.asdf.shoppingmall.Product.dto.ProductRequestDto;
 import com.asdf.shoppingmall.Product.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,10 @@ public class ProductController {
     }
 
     @PostMapping("/api/product/add")
-    public ResponseEntity<String> addProduct(@RequestBody Product product) {
+    public ResponseEntity<String> addProduct(@RequestBody ProductRequestDto requestDto) {
 
         try{
-            productService.addProduct(product);
+            productService.addProduct(requestDto);
 
             return ResponseEntity.ok("상품 등록 성공!");
         } catch (Exception e) {

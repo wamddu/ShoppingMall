@@ -1,6 +1,7 @@
 package com.asdf.shoppingmall.Product.service;
 
 import com.asdf.shoppingmall.Product.domain.Product;
+import com.asdf.shoppingmall.Product.dto.ProductRequestDto;
 import com.asdf.shoppingmall.Product.repository.ProductRepository;
 import com.asdf.shoppingmall.User.domain.Role;
 import com.asdf.shoppingmall.User.domain.User;
@@ -19,9 +20,9 @@ public class ProductService {
         this.userRepository = userRepository;
     }
 
-    public void addProduct(Product product) {
+    public void addProduct(ProductRequestDto requestDto) {
 
-            if(productRepository.existsProductByName(product.getName())) {
+            if(productRepository.existsProductByName(requestDto.getName())) {
                 throw new IllegalArgumentException("Product already exists");
             }
 
@@ -31,6 +32,10 @@ public class ProductService {
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
             try{
+                Product product = new Product();
+                product.setName(requestDto.getName());
+                product.setPrice(requestDto.getPrice());
+                product.setStockQuantity(requestDto.getStockQuantity());
                 product.setSeller(user);
                 productRepository.save(product);
         } catch (Exception ex) {
