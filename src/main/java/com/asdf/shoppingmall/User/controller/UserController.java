@@ -5,11 +5,13 @@ import com.asdf.shoppingmall.User.dto.SignupRequest;
 import com.asdf.shoppingmall.User.service.UserService;
 import com.asdf.shoppingmall.security.Jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,7 +44,6 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        System.out.println("들어옴");
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getUsername(), request.getPassword()
         ));
@@ -52,5 +53,17 @@ public class UserController {
         String token = jwtProvider.generateToken(authentication);
 
         return ResponseEntity.ok(token);
+    }
+
+    @DeleteMapping({"/api/user/delete" , "/api/admin/delete"})
+    public ResponseEntity<?> deleteUser(@RequestBody String username) {
+        try {
+            userService.deleteUser(username);
+
+            return ResponseEntity.ok("삭제 성공!");
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 }

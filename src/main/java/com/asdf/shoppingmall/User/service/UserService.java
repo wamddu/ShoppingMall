@@ -4,8 +4,10 @@ import com.asdf.shoppingmall.User.domain.Role;
 import com.asdf.shoppingmall.User.domain.User;
 import com.asdf.shoppingmall.User.dto.SignupRequest;
 import com.asdf.shoppingmall.User.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,5 +39,27 @@ public class UserService {
         userRepository.save(user);
 
         return ResponseEntity.ok("Sign up successful");
+    }
+
+    public ResponseEntity<String> deleteUser(String target_username) {
+
+        if(userRepository.findByUsername(target_username).isEmpty()) {
+            throw new IllegalArgumentException("Username is not found");
+        }
+
+        User user = userRepository.findByUsername(target_username).get();
+
+        if(SecurityContextHolder.getContext().getAuthentication().getName().equals(user.getUsername()) ||
+        SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains("ROLE_ADMIN")) {
+            try {
+                userRepository.delete(user);
+                return ResponseEntity.ok("Delete successful");
+
+            } catch (Exception ex) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 }
