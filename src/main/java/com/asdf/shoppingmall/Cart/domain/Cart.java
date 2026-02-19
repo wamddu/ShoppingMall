@@ -40,12 +40,10 @@ public class Cart {
             cartProduct = Cart_Product.createCartProduct(product, count);
             cartProduct.setCart(this);
             cartProducts.add(cartProduct);
-            return;
         }
 
         else {
             cartProduct.addCount(count);
-            return;
         }
     }
 
