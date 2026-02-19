@@ -9,6 +9,8 @@ import com.asdf.shoppingmall.User.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductService {
 
@@ -59,5 +61,9 @@ public class ProductService {
         else {
             throw new IllegalArgumentException("Only Admin or Seller can delete this product");
         }
+    }
+
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 }
