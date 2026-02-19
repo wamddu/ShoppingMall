@@ -4,12 +4,13 @@ import com.asdf.shoppingmall.User.domain.Role;
 import com.asdf.shoppingmall.User.domain.User;
 import com.asdf.shoppingmall.User.dto.SignupRequest;
 import com.asdf.shoppingmall.User.repository.UserRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -41,25 +42,28 @@ public class UserService {
         return ResponseEntity.ok("Sign up successful");
     }
 
-    public ResponseEntity<String> deleteUser(String target_username) {
+    public ResponseEntity<String> deleteMyAccount() {
 
-        if(userRepository.findByUsername(target_username).isEmpty()) {
-            throw new IllegalArgumentException("Username is not found");
-        }
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        User user = userRepository.findByUsername(target_username).get();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Username not found"));
 
-        if(SecurityContextHolder.getContext().getAuthentication().getName().equals(user.getUsername()) ||
-        SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains("ROLE_ADMIN")) {
-            try {
-                userRepository.delete(user);
-                return ResponseEntity.ok("Delete successful");
+        userRepository.delete(user);
 
-            } catch (Exception ex) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        return  ResponseEntity.ok("삭제 성공!");
+    }
+
+    public ResponseEntity<String> deleteUserByAdmin(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+
+        userRepository.delete(user);
+
+        return ResponseEntity.ok("삭제 성공!");
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
