@@ -3,6 +3,7 @@ package com.asdf.shoppingmall.Product.controller;
 import com.asdf.shoppingmall.Product.domain.Product;
 import com.asdf.shoppingmall.Product.dto.ProductRequestDto;
 import com.asdf.shoppingmall.Product.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ public class ProductController {
         this.productService = productService;
     }
 
+    @Operation(summary = "제품 등록")
     @PostMapping("/api/product/add")
     public ResponseEntity<String> addProduct(@RequestBody ProductRequestDto requestDto) {
 
@@ -31,6 +33,7 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "제품 삭제")
     @DeleteMapping("/api/product/delete/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable long id) {
 
@@ -43,6 +46,7 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "모든 제품 조회")
     @GetMapping("/api/admin/products")
     public List<Product> getAllProducts() {
         return productService.getAllProducts();

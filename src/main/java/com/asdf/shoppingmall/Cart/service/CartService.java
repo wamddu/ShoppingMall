@@ -69,7 +69,7 @@ public class CartService {
         cartRepository.save(cart);
     }
 
-    public void changeCartProductCount(CartRequestDto requestDto, int count) {
+    public void changeCartProductCount(CartRequestDto requestDto) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = userRepository.findByUsername(username)
@@ -79,7 +79,7 @@ public class CartService {
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
         Cart cart = user.getCart();
-        cart.changeCount(product, count);
+        cart.changeCount(product, requestDto.getCount());
         cartRepository.save(cart);
     }
 }

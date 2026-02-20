@@ -23,31 +23,17 @@ public class DeliveryService {
         }
 
         Delivery delivery = deliveryRepository.findById(deliveryId).get();
+
         delivery.setDeliveryStatus(DeliveryStatus.START);
         deliveryRepository.save(delivery);
     }
 
-    @Transactional
-    public void shippingDelivery(Long deliveryId) {
+    public void changeStatus(Long deliveryId, DeliveryStatus status) {
 
-        if(deliveryRepository.findById(deliveryId).isEmpty()) {
-            throw new IllegalArgumentException("Delivery Not Found");
-        }
+        Delivery delivery = deliveryRepository.findById(deliveryId)
+                .orElseThrow(() -> new IllegalArgumentException("Delivery Not Found"));
 
-        Delivery delivery = deliveryRepository.findById(deliveryId).get();
-        delivery.setDeliveryStatus(DeliveryStatus.SHIPPED);
-        deliveryRepository.save(delivery);
-    }
-
-    @Transactional
-    public void doneDelivery(Long deliveryId) {
-
-        if(deliveryRepository.findById(deliveryId).isEmpty()) {
-            throw new IllegalArgumentException("Delivery Not Found");
-        }
-
-        Delivery delivery = deliveryRepository.findById(deliveryId).get();
-        delivery.setDeliveryStatus(DeliveryStatus.DELIVERED);
+        delivery.setDeliveryStatus(status);
         deliveryRepository.save(delivery);
     }
 }

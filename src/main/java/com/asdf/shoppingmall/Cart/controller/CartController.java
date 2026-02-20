@@ -2,6 +2,7 @@ package com.asdf.shoppingmall.Cart.controller;
 
 import com.asdf.shoppingmall.Cart.domain.CartRequestDto;
 import com.asdf.shoppingmall.Cart.service.CartService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,7 @@ public class CartController {
         this.cartService = cartService;
     }
 
+    @Operation(summary = "제품 장바구니 추가")
     @PostMapping("/api/cart/add")
     public ResponseEntity<String> addCart(@RequestBody CartRequestDto requestDto) {
         try {
@@ -31,6 +33,7 @@ public class CartController {
         }
     }
 
+    @Operation(summary = "장바구니에서 해당 제품 삭제")
     @DeleteMapping("/api/cart/product/delete")
     public ResponseEntity<String> cartProductDelete(@RequestBody CartRequestDto requestDto) {
         try {
@@ -40,6 +43,19 @@ public class CartController {
         } catch (Exception e) {
 
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "장바구니 제품 수량 변경")
+    @PostMapping("/api/cart/product/change")
+    public ResponseEntity<String> cartProductChange(@RequestBody CartRequestDto requestDto) {
+
+        try {
+            cartService.changeCartProductCount(requestDto);
+
+            return ResponseEntity.ok().body("수량 변경 성공!");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 }

@@ -9,6 +9,8 @@ import com.asdf.shoppingmall.Product.domain.Product;
 import com.asdf.shoppingmall.User.domain.User;
 import com.asdf.shoppingmall.User.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -29,12 +31,13 @@ public class OrderService {
     }
 
     @Transactional
-    public Long createOrder(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    public Long createOrder() {
+        String username =  SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Cart cart = cartRepository.findById(user.getCart().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("username not found!"));
+
+        Cart cart = user.getCart();
 
         Order order = new Order();
 

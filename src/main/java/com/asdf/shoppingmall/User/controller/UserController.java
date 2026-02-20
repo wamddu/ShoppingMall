@@ -5,6 +5,7 @@ import com.asdf.shoppingmall.User.dto.LoginRequest;
 import com.asdf.shoppingmall.User.dto.SignupRequest;
 import com.asdf.shoppingmall.User.service.UserService;
 import com.asdf.shoppingmall.security.Jwt.JwtProvider;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ public class UserController {
         this.authenticationManager = authenticationManager;
     }
 
+    @Operation(summary = "회원가입")
     @PostMapping("/signup")
     public ResponseEntity<String> addUser(@RequestBody SignupRequest request) {
         System.out.println("signup");
@@ -43,6 +45,7 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "로그인")
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -56,6 +59,7 @@ public class UserController {
         return ResponseEntity.ok(token);
     }
 
+    @Operation(summary = "회원 탈퇴")
     @DeleteMapping("/api/user/delete/me")
     public ResponseEntity<?> deleteMyAccount() {
         try {
@@ -68,6 +72,7 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "회원 삭제")
     @DeleteMapping("/api/admin/delete/{id}")
     public ResponseEntity<?> deleteUserByAdmin(@PathVariable Long id) {
         try{
@@ -79,6 +84,7 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "모든 회원 조회")
     @GetMapping("/api/admin/users")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
