@@ -2,8 +2,10 @@ package com.asdf.shoppingmall.Order.service;
 
 import com.asdf.shoppingmall.Cart.domain.Cart;
 import com.asdf.shoppingmall.Cart.domain.Cart_Product;
+import com.asdf.shoppingmall.Cart.repository.CartProductRepository;
 import com.asdf.shoppingmall.Cart.repository.CartRepository;
 import com.asdf.shoppingmall.Order.domain.*;
+import com.asdf.shoppingmall.Order.repository.DeliveryRepository;
 import com.asdf.shoppingmall.Order.repository.OrderRepository;
 import com.asdf.shoppingmall.Product.domain.Product;
 import com.asdf.shoppingmall.User.domain.User;
@@ -14,24 +16,39 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
-    private final CartRepository cartRepository;
+    private final CartProductRepository cartProductRepository;
+    private final DeliveryRepository deliveryRepository;
 
     public OrderService(OrderRepository orderRepository,
                         UserRepository userRepository,
-                        CartRepository cartRepository) {
+                        CartProductRepository cartProductRepository,
+                        DeliveryRepository deliveryRepository) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
-        this.cartRepository = cartRepository;
+        this.cartProductRepository = cartProductRepository;
+        this.deliveryRepository = deliveryRepository;
     }
 
     @Transactional
+    public List<Order> getMyOrders() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("username not found!"));
+
+        return orderRepository.findByUserOrderByOrderDateDesc(user);
+    }
+
+
+    @Transactional
     public Long createOrder() {
+
         String username =  SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = userRepository.findByUsername(username)
@@ -40,6 +57,8 @@ public class OrderService {
         Cart cart = user.getCart();
 
         Order order = new Order();
+        order.setUser(user);
+        order.setOrderDate(new Date());
 
         for(Cart_Product cartProduct : cart.getCartProducts()) {
             Product product = cartProduct.getProduct();
@@ -65,7 +84,10 @@ public class OrderService {
 
         orderRepository.save(order);
 
-        cartRepository.deleteById(user.getCart().getId());
+        deliveryRepository.save(delivery);
+
+        cart.getCartProducts().clear();
+        cartProductRepository.deleteByCart(cart);
 
         return order.getId();
     }

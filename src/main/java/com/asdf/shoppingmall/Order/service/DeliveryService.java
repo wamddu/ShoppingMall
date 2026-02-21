@@ -15,19 +15,6 @@ public class DeliveryService {
         this.deliveryRepository = deliveryRepository;
     }
 
-    @Transactional
-    public void startDelivery(Long deliveryId) {
-
-        if(deliveryRepository.findById(deliveryId).isEmpty()) {
-            throw new IllegalArgumentException("Delivery Not Found");
-        }
-
-        Delivery delivery = deliveryRepository.findById(deliveryId).get();
-
-        delivery.setDeliveryStatus(DeliveryStatus.START);
-        deliveryRepository.save(delivery);
-    }
-
     public void changeStatus(Long deliveryId, DeliveryStatus status) {
 
         Delivery delivery = deliveryRepository.findById(deliveryId)
@@ -35,5 +22,12 @@ public class DeliveryService {
 
         delivery.setDeliveryStatus(status);
         deliveryRepository.save(delivery);
+    }
+
+    public String getDelivceryStatus(Long deliveryId) {
+        Delivery delivery = deliveryRepository.findById(deliveryId)
+                .orElseThrow(() -> new IllegalArgumentException("Delivery Not Found"));
+
+        return delivery.getDeliveryStatus().toString();
     }
 }

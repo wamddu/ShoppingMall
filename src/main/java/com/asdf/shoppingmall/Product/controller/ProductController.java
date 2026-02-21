@@ -47,8 +47,9 @@ public class ProductController {
     }
 
     @Operation(summary = "모든 제품 조회")
-    @GetMapping("/api/admin/products")
+    @GetMapping("/api/products")
     public List<Product> getAllProducts() {
         return productService.getAllProducts();
     }
+
 }

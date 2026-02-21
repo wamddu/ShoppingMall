@@ -40,6 +40,17 @@ public class CartService {
         return cartRepository.findAll();
     }
 
+    public Cart getMyCart() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        
+        Cart cart = user.getCart();
+
+        return cart;
+    }
+
+
     public void addCart(CartRequestDto requestDto) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 

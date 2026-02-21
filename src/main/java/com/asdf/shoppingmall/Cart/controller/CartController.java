@@ -5,10 +5,8 @@ import com.asdf.shoppingmall.Cart.service.CartService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import com.asdf.shoppingmall.Cart.domain.Cart;
 
 @RestController
 public class CartController {
@@ -18,6 +16,17 @@ public class CartController {
 
     public CartController(CartService cartService) {
         this.cartService = cartService;
+    }
+
+    @Operation(summary = "내 장바구니 조회")
+    @GetMapping("/api/cart/my")
+    public ResponseEntity<Cart> getMyCart() {
+        try {
+            Cart cart = cartService.getMyCart();
+            return ResponseEntity.ok(cart);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @Operation(summary = "제품 장바구니 추가")

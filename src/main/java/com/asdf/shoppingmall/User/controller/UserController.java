@@ -3,6 +3,7 @@ package com.asdf.shoppingmall.User.controller;
 import com.asdf.shoppingmall.User.domain.User;
 import com.asdf.shoppingmall.User.dto.LoginRequest;
 import com.asdf.shoppingmall.User.dto.SignupRequest;
+import com.asdf.shoppingmall.User.dto.UserResponseDto;
 import com.asdf.shoppingmall.User.service.UserService;
 import com.asdf.shoppingmall.security.Jwt.JwtProvider;
 import io.swagger.v3.oas.annotations.Operation;
@@ -86,7 +87,7 @@ public class UserController {
 
     @Operation(summary = "모든 회원 조회")
     @GetMapping("/api/admin/users")
-    public List<User> getAllUsers() {
+    public List<UserResponseDto> getAllUsers() {
         return userService.getAllUsers();
     }
 }

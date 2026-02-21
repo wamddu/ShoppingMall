@@ -1,10 +1,9 @@
 package com.asdf.shoppingmall.Order.domain;
 
 import com.asdf.shoppingmall.User.domain.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.action.internal.OrphanRemovalAction;
 
 import java.util.ArrayList;
@@ -12,7 +11,9 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
+@Table(name = "orders")
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Order {
@@ -29,12 +30,15 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "order",
             cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
             orphanRemoval = true)
     private List<Order_Product> orderProducts = new ArrayList<Order_Product>();
+
 
     @OneToOne(mappedBy = "order")
     private Delivery delivery;

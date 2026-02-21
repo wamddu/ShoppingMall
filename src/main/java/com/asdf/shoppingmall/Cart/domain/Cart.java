@@ -2,17 +2,17 @@ package com.asdf.shoppingmall.Cart.domain;
 
 import com.asdf.shoppingmall.Product.domain.Product;
 import com.asdf.shoppingmall.User.domain.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Cart {
@@ -31,6 +31,7 @@ public class Cart {
 
     @OneToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     public void addCartProduct(Product product, int count) {
@@ -73,5 +74,9 @@ public class Cart {
                 .filter(cp -> cp.getProduct().equals(product))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void clear() {
+        this.cartProducts.clear();
     }
 }
